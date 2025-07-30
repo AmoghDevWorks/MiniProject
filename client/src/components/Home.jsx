@@ -1,7 +1,28 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Sprout, Cloud, TrendingUp, Users, Calendar, MapPin, Thermometer, Droplets } from 'lucide-react'
+import { useSelector } from 'react-redux'
+import findLocationData from '../utils/findLocationData'
 
 const Home = () => {
+
+  const user = useSelector((state)=>state.user)
+
+  const [ locationData,setLocationData ] = useState({
+    Temperature:'-',
+    Humidity:'-',
+    Rainfall:'-',
+    UVIdx:'-',
+  })
+
+  useEffect(()=>{
+    const fetchLocationData = async()=>{
+      const data = await findLocationData()
+      setLocationData(data)
+    }
+
+    fetchLocationData()
+  },[])
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       {/* Hero Section */}
@@ -39,28 +60,28 @@ const Home = () => {
               <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-600">Temperature</p>
-                  <p className="text-2xl font-bold text-blue-600">28°C</p>
+                  <p className="text-2xl font-bold text-blue-600">{!user?'-':locationData.Temperature+'°C'}</p>
                 </div>
                 <Thermometer className="text-blue-500" size={32} />
               </div>
               <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-600">Humidity</p>
-                  <p className="text-2xl font-bold text-blue-600">65%</p>
+                  <p className="text-2xl font-bold text-blue-600">{!user?'-':locationData.Humidity+'%'}</p>
                 </div>
                 <Droplets className="text-blue-500" size={32} />
               </div>
               <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-600">Rainfall</p>
-                  <p className="text-2xl font-bold text-green-600">2.5mm</p>
+                  <p className="text-2xl font-bold text-green-600">{!user?'-':location.Rainfall+'mm'}</p>
                 </div>
                 <Cloud className="text-green-500" size={32} />
               </div>
               <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-600">UV Index</p>
-                  <p className="text-2xl font-bold text-yellow-600">High</p>
+                  <p className="text-2xl font-bold text-yellow-600">{!user?'-':location.UVIdx}</p>
                 </div>
                 <div className="w-8 h-8 bg-yellow-400 rounded-full"></div>
               </div>

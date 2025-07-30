@@ -12,34 +12,34 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gradient-to-br from-green-100 to-blue-50 text-gray-800 w-full shadow-lg border-b border-gray-300">
+    <nav className="bg-gradient-to-br from-green-100 to-green-50 text-gray-800 w-full shadow-lg border-b border-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo or Brand Name */}
-          <div className="text-2xl font-bold text-blue-600 hover:text-blue-700 cursor-pointer">
+          <div className="text-2xl font-bold text-green-600 hover:text-green-700 cursor-pointer">
             MyApp
           </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="/home" className="text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-md hover:bg-blue-50">
+            <a href="/home" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
               Home
             </a>
-            <a href="/about" className="text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-md hover:bg-blue-50">
+            <a href="/about" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
               About
             </a>
-            <a href="/contact" className="text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-md hover:bg-blue-50">
+            <a href="/contact" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
               Contact
             </a>
             
             {/* User Auth Section */}
             {user ? (
-              <div className="flex items-center space-x-2 bg-blue-100 hover:bg-blue-200 px-4 py-2 rounded-full cursor-pointer">
-                <User size={20} className="text-blue-600" />
-                <span className="text-blue-700 font-medium">Profile</span>
+              <div className="flex items-center space-x-2 bg-green-100 hover:bg-green-200 px-4 py-2 rounded-full cursor-pointer">
+                <User size={20} className="text-green-600" />
+                <span className="text-green-700 font-medium">Profile</span>
               </div>
             ) : (
-              <a href="/signin" className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
+              <a href="/signin" className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium">
                 <LogIn size={20} />
                 <span>Sign In</span>
               </a>
@@ -64,21 +64,21 @@ const Navbar = () => {
           <div className="px-4 py-4 space-y-3">
             <a 
               href="/home" 
-              className="block text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-4 py-3 rounded-md font-medium"
+              className="block text-gray-700 hover:text-green-600 hover:bg-green-50 px-4 py-3 rounded-md font-medium"
               onClick={handleLinkClick}
             >
               Home
             </a>
             <a 
               href="/about" 
-              className="block text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-4 py-3 rounded-md font-medium"
+              className="block text-gray-700 hover:text-green-600 hover:bg-green-50 px-4 py-3 rounded-md font-medium"
               onClick={handleLinkClick}
             >
               About
             </a>
             <a 
               href="/contact" 
-              className="block text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-4 py-3 rounded-md font-medium"
+              className="block text-gray-700 hover:text-green-600 hover:bg-green-50 px-4 py-3 rounded-md font-medium"
               onClick={handleLinkClick}
             >
               Contact
@@ -87,14 +87,14 @@ const Navbar = () => {
             {/* Mobile User Auth Section */}
             <div className="pt-3 border-t border-gray-200">
               {user ? (
-                <div className="flex items-center space-x-3 bg-blue-100 hover:bg-blue-200 px-4 py-3 rounded-md cursor-pointer">
-                  <User size={20} className="text-blue-600" />
-                  <span className="text-blue-700 font-medium">Profile</span>
+                <div className="flex items-center space-x-3 bg-green-100 hover:bg-green-200 px-4 py-3 rounded-md cursor-pointer">
+                  <User size={20} className="text-green-600" />
+                  <span className="text-green-700 font-medium">Profile</span>
                 </div>
               ) : (
                 <a 
                   href="/signin" 
-                  className="flex items-center space-x-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-md font-medium w-full"
+                  className="flex items-center space-x-3 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-md font-medium w-full"
                   onClick={handleLinkClick}
                 >
                   <LogIn size={20} />
