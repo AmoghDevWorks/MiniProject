@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, X, User, LogIn } from 'lucide-react';
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,15 +23,15 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="/home" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
+            <Link to="/" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
               Home
-            </a>
-            <a href="/about" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
+            </Link>
+            <Link to="/about" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
               About
-            </a>
-            <a href="/contact" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
+            </Link>
+            <Link to="/contact" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
               Contact
-            </a>
+            </Link>
             
             {/* User Auth Section */}
             {user ? (
@@ -39,10 +40,10 @@ const Navbar = () => {
                 <span className="text-green-700 font-medium">Profile</span>
               </div>
             ) : (
-              <a href="/signin" className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium">
+              <Link to="/auth" className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium">
                 <LogIn size={20} />
                 <span>Sign In</span>
-              </a>
+              </Link>
             )}
           </div>
 
@@ -62,27 +63,27 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
           <div className="px-4 py-4 space-y-3">
-            <a 
-              href="/home" 
+            <Link 
+              to="/" 
               className="block text-gray-700 hover:text-green-600 hover:bg-green-50 px-4 py-3 rounded-md font-medium"
               onClick={handleLinkClick}
             >
               Home
-            </a>
-            <a 
-              href="/about" 
+            </Link>
+            <Link 
+              to="/about" 
               className="block text-gray-700 hover:text-green-600 hover:bg-green-50 px-4 py-3 rounded-md font-medium"
               onClick={handleLinkClick}
             >
               About
-            </a>
-            <a 
-              href="/contact" 
+            </Link>
+            <Link 
+              to="/contact" 
               className="block text-gray-700 hover:text-green-600 hover:bg-green-50 px-4 py-3 rounded-md font-medium"
               onClick={handleLinkClick}
             >
               Contact
-            </a>
+            </Link>
             
             {/* Mobile User Auth Section */}
             <div className="pt-3 border-t border-gray-200">
@@ -92,14 +93,14 @@ const Navbar = () => {
                   <span className="text-green-700 font-medium">Profile</span>
                 </div>
               ) : (
-                <a 
-                  href="/signin" 
+                <Link 
+                  to="/auth" 
                   className="flex items-center space-x-3 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-md font-medium w-full"
                   onClick={handleLinkClick}
                 >
                   <LogIn size={20} />
                   <span>Sign In</span>
-                </a>
+                </Link>
               )}
             </div>
           </div>

@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Provider } from 'react-redux'
 import appStore from '../utils/appStore'
+import Auth from '../auth/auth'
 
 const Structure = () => {
   return (
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path:'/profile',
         element:<Profile />
+      },
+      {
+        path:'/auth',
+        element:<Auth />
       }
     ]
   }
