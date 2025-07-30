@@ -14,9 +14,12 @@ const Auth = () => {
   }
 
   const handleContinue = () => {
-    if (selectedRole) {
-      console.log(`Selected role: ${selectedRole}`)
-      // Handle role selection logic here
+    if (selectedRole==='admin') {
+      navigate('/adminSignIn')
+    }else if(selectedRole==='technician'){
+      navigate('/technicianSignIn')
+    }else{
+      navigate('/farmerSignIn')
     }
   }
 
@@ -123,14 +126,14 @@ const Auth = () => {
           </div>
 
           {/* Modal Footer */}
-          <div className="px-6 pb-6">
+          {selectedRole!=='admin' && <div className="px-6 pb-6">
             <div className="text-center">
               <p className="text-md text-black">
                 Don't have an account? 
                 <a href="#" className="text-green-600 hover:text-green-700 font-medium ml-1">Sign up here</a>
               </p>
             </div>
-          </div>
+          </div>}
         </div>
       </div>
     </div>

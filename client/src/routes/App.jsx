@@ -7,6 +7,11 @@ import Footer from '../components/Footer'
 import { Provider } from 'react-redux'
 import appStore from '../utils/appStore'
 import Auth from '../auth/auth'
+import AdminSignIn from '../admin/AdminSignIn'
+import FarmerSignIn from '../farmer/FarmerSignIn'
+import FarmerSignUp from '../farmer/FarmerSignUp'
+import TechnicianSignUp from '../technician/TechnicianSignUp'
+import TechnicianSignIn from '../technician/TechnicianSignIn'
 
 const Structure = () => {
   return (
@@ -34,6 +39,26 @@ const router = createBrowserRouter([
       {
         path:'/auth',
         element:<Auth />
+      },
+      {
+        path:'/adminSignIn',
+        element:<AdminSignIn />
+      },
+      {
+        path:'/farmerSignIn',
+        element:<FarmerSignIn />
+      },
+      {
+        path:'/farmerSignUp',
+        element:<FarmerSignUp />
+      },
+      {
+        path:'/technicianSignUp',
+        element:<TechnicianSignUp />
+      },
+      {
+        path:'/techicianSignIn',
+        element:<TechnicianSignIn />
       }
     ]
   }
