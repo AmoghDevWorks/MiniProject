@@ -2,8 +2,10 @@ import React from 'react'
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
 import Home from '../components/Home'
 import Profile from '../components/Profile'
-import Navbar from '../utils/Navbar'
-import Footer from '../utils/Footer'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import { Provider } from 'react-redux'
+import appStore from '../utils/appStore'
 
 const Structure = () => {
   return (
@@ -32,7 +34,9 @@ const router = createBrowserRouter([
 const App = () =>{
   return(
     <div>
-      <RouterProvider router={router} />
+      <Provider store={appStore}>
+          <RouterProvider router={router} />
+      </Provider>
     </div>
   )
 }
