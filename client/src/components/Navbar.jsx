@@ -18,7 +18,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo or Brand Name */}
           <div className="text-2xl font-bold text-green-600 hover:text-green-700 cursor-pointer">
-            MyApp
+            FarmApp
           </div>
 
           {/* Desktop Menu */}

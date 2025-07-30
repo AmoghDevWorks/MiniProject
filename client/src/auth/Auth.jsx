@@ -35,7 +35,7 @@ const Auth = () => {
       <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div
           style={{
-            background: 'radial-gradient(circle, rgba(255,255,255,0.5), rgba(232,253,239,0.7))',
+            background: 'radial-gradient(circle, rgba(255,255,255,0.2), rgba(232,253,239,0.7))',
           }}
           className="rounded-2xl shadow-2xl w-full max-w-md"
         >
