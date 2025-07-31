@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { removeRole } from '../utils/roleSlice'
 import { removeUser } from '../utils/userSlice'
+import { useEffect } from 'react';
+import '../css/googleTranslator.css'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +23,23 @@ const Navbar = () => {
     dispatch(removeRole())
     navigate('/')
   }
+
+  useEffect(()=>{
+    const script = document.createElement('script')
+    script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+    document.body.appendChild(script)
+
+    window.googleTranslateElementInit = () =>{
+      new google.translate.TranslateElement(
+        {
+          pageLanguage: 'en',
+          includedLanguages: "en,hi,kn,te,ta,bn,ml,mr,gu,pa,ur,or,as",
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+        },
+        'google_translate_element'
+      );
+    }
+  },[])
 
   return (
     <nav className="bg-gradient-to-br from-green-100 to-green-50 text-gray-800 w-full shadow-lg border-b border-gray-300">
@@ -42,6 +61,9 @@ const Navbar = () => {
             <Link to="/contact" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
               Contact
             </Link>
+            <div className="relative flex items-center gap-2">
+              <div id="google_translate_element" className="translate-dropdown text-sm"></div>
+            </div>
             
             {/* User Auth Section */}
             {user ? (

@@ -1,0 +1,35 @@
+/* Hide the Google branding - optional but against policy */
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
+
+/* Style the dropdown */
+.goog-te-combo {
+  background-color: #e0f2f1;
+  border: 1px solid #34d399;
+  color: #065f46;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Optional hover effect */
+.goog-te-combo:hover {
+  background-color: #d1fae5;
+}
+
+/* Fix alignment inside navbar */
+#google_translate_element {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+
+/* Fix weird spacing */
+.goog-te-gadget {
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
