@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 import { Mail, Lock, Eye, EyeOff, Settings } from 'lucide-react'
+import axios from 'axios'
+import { useDispatch } from 'react-redux'
+import { addUser } from '../utils/userSlice'
+import { useNavigate } from 'react-router-dom'
 
 const AdminSignIn = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +13,9 @@ const AdminSignIn = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -46,28 +53,26 @@ const AdminSignIn = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async () => {    
-    if (!validateForm()) {
-      return
-    }
+  const handleSubmit = async () => {
+  if (!validateForm()) return;
 
-    setIsLoading(true)
-    
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      console.log('Admin login:', formData)
-      // Handle successful login here
-      alert('Admin login successful!')
-      
-    } catch (error) {
-      console.error('Login error:', error)
-      setErrors({ general: 'Login failed. Please try again.' })
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  setIsLoading(true);
+
+  axios.post(`${import.meta.env.VITE_BACKEND_URL}/admin/signIn`, formData)
+    .then((res) => {
+      alert('Successful sign-in');
+      console.log(res.data);
+
+      dispatch(addUser(res.data.data)); 
+      navigate('/');
+    })
+    .catch((e) => {
+      alert('Unable to sign in');
+      console.error(e);
+      setErrors(e.response?.data || { data: 'Unknown error' });
+    })
+    .finally(() => setIsLoading(false));
+};
 
   return (
     <div className="py-10 min-h-fit bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center px-4">

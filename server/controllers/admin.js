@@ -57,7 +57,7 @@ const signIn = async(req,res,next) => {
         if(!passwordMatch){
             return res.status(404).json({data:"Invalid credentials"})
         }
-
+        
         return res.status(200).json({msg:'sign In successfull',data:userData})
     })
     .catch(e=>{
