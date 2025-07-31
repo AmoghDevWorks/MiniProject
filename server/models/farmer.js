@@ -42,3 +42,5 @@ const farmerSchema = new mongoose.Schema({
         default: []
     }
 })
+const farmer_Schema = mongoose.model('farmer', farmerSchema);
+module.exports = farmer_Schema;
