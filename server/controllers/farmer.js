@@ -1,5 +1,6 @@
 const farmermodel= require('../models/farmer')
 const bcrypt = require('bcrypt')
+
 const signUp = async(req,res)=>{
     const { name, email, password, phoneNo } = req.body;
     if(!name || !email || !password || !phoneNo) {
@@ -24,6 +25,7 @@ const signUp = async(req,res)=>{
         return res.status(500).json({ data: 'Internal server error' });
     }
 }
+
 const signIn = async(req,res)=>{
     const { email, password } = req.body;
     if(!email || !password) {
@@ -45,4 +47,5 @@ const signIn = async(req,res)=>{
         return res.status(500).json({ data: 'Internal server error' });
     }
 }
+
 module.exports ={signUp, signIn};

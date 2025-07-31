@@ -1,16 +1,17 @@
 const mongoose = require('mongoose')
 
 const deviceRequestSchema = new mongoose.Schema({
-    time: { type: String, required: true },
-    date: { type: String, required: true },
-    allottedTechnician: { type: String, required: true },
-    workCompleted: { type: Boolean, required: true }
+    time: { type: String, default: () => new Date().toLocaleTimeString() },
+    date: { type: String, default: () => new Date().toLocaleDateString() },
+    allottedTechnician: { type: Boolean, default:false },
+    technicianId: { type: mongoose.Schema.Types.ObjectId, ref: 'Technician' },
+    workCompleted: { type: Boolean, default:false }
 }, { _id: false });
 
 const imageProcessRequestSchema = new mongoose.Schema({
     image: { type: String, required: true },
     result: { type: String, required: true },
-    date: { type: String, required: true }
+    date: { type: String, default: ()=> new Date().toLocaleDateString() }
 }, { _id: false });
 
 const farmerSchema = new mongoose.Schema({
