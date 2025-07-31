@@ -16,8 +16,8 @@ const Home = () => {
 
   useEffect(()=>{
     const fetchLocationData = async()=>{
-      // const data = await findLocationData()
-      // setLocationData(data)
+      const data = await findLocationData()
+      setLocationData(data)
     }
 
     fetchLocationData()

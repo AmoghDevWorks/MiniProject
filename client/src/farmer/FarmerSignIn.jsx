@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Mail, Lock, Eye, EyeOff, Settings } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const FarmerSignIn = () => {
   const [formData, setFormData] = useState({
@@ -185,6 +186,7 @@ const FarmerSignIn = () => {
                 'Sign In'
               )}
             </button>
+            <div className='text-center'> Doesn't have account?<Link to='/farmerSignUp' className='font-semibold mx-2 text-green-600'>Sign Up</Link></div>
           </div>
         </div>
 
