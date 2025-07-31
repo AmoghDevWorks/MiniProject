@@ -35,10 +35,10 @@ const Auth = () => {
         `
       }}
     >
-      <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="fixed inset-0 bg-opacity-30 flex items-center justify-center z-50 p-4">
         <div
           style={{
-            background: 'radial-gradient(circle, rgba(255,255,255,0.2), rgba(232,253,239,0.7))',
+            background: 'radial-gradient(circle, rgba(255,255,255,0.4), rgba(232,253,239,0.7))',
           }}
           className="rounded-2xl shadow-2xl w-full max-w-md"
         >
@@ -56,7 +56,7 @@ const Auth = () => {
           </div>
 
           {/* Modal Body */}
-          <div className="p-8">
+          <div className="px-8 py-12">
             <div className="flex flex-col items-center gap-6">
               {/* First Row - Admin and Technician */}
               <div className="flex gap-6">
@@ -125,15 +125,6 @@ const Auth = () => {
             </div>
           </div>
 
-          {/* Modal Footer */}
-          {selectedRole!=='admin' && <div className="px-6 pb-6">
-            <div className="text-center">
-              <p className="text-md text-black">
-                Don't have an account? 
-                <a href="#" className="text-green-600 hover:text-green-700 font-medium ml-1">Sign up here</a>
-              </p>
-            </div>
-          </div>}
         </div>
       </div>
     </div>

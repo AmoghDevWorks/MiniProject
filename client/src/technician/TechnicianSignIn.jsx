@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Mail, Lock, Eye, EyeOff, Settings } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const TechnicianSignIn = () => {
   const [formData, setFormData] = useState({
@@ -180,6 +181,7 @@ const TechnicianSignIn = () => {
                 'Sign In'
               )}
             </button>
+            <div className='text-center'>Doesn't have account? <Link to='/technicianSignUp' className='font-semibold text-green-600'>Sign Up</Link></div>
           </div>
         </div>
 
