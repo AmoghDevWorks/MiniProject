@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+
 const deviceRequestSchema = new mongoose.Schema({
     time: { type: String, required: true },
     date: { type: String, required: true },
@@ -11,6 +12,7 @@ const imageProcessRequestSchema = new mongoose.Schema({
     result: { type: String, required: true },
     date: { type: String, required: true }
 }, { _id: false });
+
 const farmerSchema = new mongoose.Schema({
     name:{
         type: String,
@@ -42,5 +44,5 @@ const farmerSchema = new mongoose.Schema({
         default: []
     }
 })
-const farmermodel = mongoose.model('farmer', farmerSchema);
-module.exports = farmer_Schema;
+const farmerModel = mongoose.model('farmer', farmerSchema);
+module.exports = farmerModel;
