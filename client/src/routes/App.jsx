@@ -62,7 +62,7 @@ const router = createBrowserRouter([
         element:<TechnicianSignUp />
       },
       {
-        path:'/techicianSignIn',
+        path:'/technicianSignIn',
         element:<TechnicianSignIn />
       }
     ]
