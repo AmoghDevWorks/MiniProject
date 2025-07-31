@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { addUser } from '../utils/userSlice'
 import { useNavigate } from 'react-router-dom'
+import { addRole } from '../utils/roleSlice'
 
 const AdminSignIn = () => {
   const [formData, setFormData] = useState({
@@ -64,6 +65,7 @@ const AdminSignIn = () => {
       console.log(res.data);
 
       dispatch(addUser(res.data.data)); 
+      dispatch(addRole('admin'))
       navigate('/');
     })
     .catch((e) => {
