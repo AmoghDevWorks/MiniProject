@@ -62,7 +62,6 @@ const AdminSignIn = () => {
   axios.post(`${import.meta.env.VITE_BACKEND_URL}/admin/signIn`, formData)
     .then((res) => {
       alert('Successful sign-in');
-      console.log(res.data);
 
       dispatch(addUser(res.data.data)); 
       dispatch(addRole('admin'))
