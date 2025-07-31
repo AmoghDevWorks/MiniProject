@@ -1,5 +1,48 @@
-const farmermodel=require('../models/farmer')
+const farmermodel= require('../models/farmer')
 const bcrypt = require('bcrypt')
-const signUp = async(req,res,next) => {
-    
+const signUp = async(req,res)=>{
+    const { name, email, password, phoneNo } = req.body;
+    if(!name || !email || !password || !phoneNo) {
+        return res.status(400).json({ data: 'All fields are required' });
+    }
+    try{
+        const existingFarmer = await farmermodel.findOne({ email: email });
+        if(existingFarmer){
+            return res.status(400).json({ data: 'Farmer already exists' });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newFarmer = new farmermodel({
+            name: name,
+            email: email,
+            password: hashedPassword,
+            phoneNo: phoneNo
+        });
+        await newFarmer.save();
+    }
+    catch(error){
+        console.error('Error during signup:', error);
+        return res.status(500).json({ data: 'Internal server error' });
+    }
 }
+const signIn = async(req,res)=>{
+    const { email, password } = req.body;
+    if(!email || !password) {
+        return res.status(400).json({ data: 'Email and password are required' });
+    }
+    try{
+        const farmer = await farmermodel.findOne({ email: email });
+        if(!farmer){
+            return res.status(404).json({ data: 'Farmer not found' });
+        }
+        const isPasswordValid = await bcrypt.compare(password, farmer.password);
+        if(!isPasswordValid){
+            return res.status(401).json({ data: 'Invalid credentials' });
+        }
+        return res.status(200).json({ msg: 'SignIn successful', data: farmer });
+    }
+    catch(error){
+        console.error('Error during signin:', error);
+        return res.status(500).json({ data: 'Internal server error' });
+    }
+}
+module.exports ={signUp, signIn};
