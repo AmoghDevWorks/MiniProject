@@ -13,6 +13,7 @@ import FarmerSignUp from '../farmer/FarmerSignUp'
 import TechnicianSignUp from '../technician/TechnicianSignUp'
 import TechnicianSignIn from '../technician/TechnicianSignIn'
 import About from '../components/About'
+import Contact from '../components/Contact'
 
 const Structure = () => {
   return (
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path:'/about',
         element:<About />
+      },
+      {
+        path:'/contact',
+        element:<Contact />
       },
       {
         path:'/auth',
