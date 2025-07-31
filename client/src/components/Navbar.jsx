@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
 import { Menu, X, User, LogIn } from 'lucide-react';
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
+import { removeRole } from '../utils/roleSlice'
+import { removeUser } from '../utils/userSlice'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const user = useSelector((state)=>state.user)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleLinkClick = () => {
     setIsOpen(false);
   };
+
+  const handleSignOut = () =>{
+    dispatch(removeUser())
+    dispatch(removeRole())
+    navigate('/')
+  }
 
   return (
     <nav className="bg-gradient-to-br from-green-100 to-green-50 text-gray-800 w-full shadow-lg border-b border-gray-300">
@@ -35,9 +45,14 @@ const Navbar = () => {
             
             {/* User Auth Section */}
             {user ? (
-              <div className="flex items-center space-x-2 bg-green-100 hover:bg-green-200 px-4 py-2 rounded-full cursor-pointer">
-                <User size={20} className="text-green-600" />
-                <span className="text-green-700 font-medium">Profile</span>
+              <div className='flex gap-8'>
+                <div className="flex items-center space-x-2 bg-green-100 hover:bg-green-200 px-4 py-2 rounded-full cursor-pointer">
+                  <User size={20} className="text-green-600" />
+                  <span className="text-green-700 font-medium">Profile</span>
+                </div>
+                <div onClick={handleSignOut} className="flex items-center space-x-2 bg-green-100 hover:bg-green-200 px-4 py-2 rounded-full cursor-pointer">
+                  <span className="text-green-700 font-medium">Sign Out</span>
+                </div>
               </div>
             ) : (
               <Link to="/auth" className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium">
