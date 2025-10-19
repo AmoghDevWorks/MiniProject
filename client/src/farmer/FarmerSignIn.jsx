@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Mail, Lock, Eye, EyeOff, Settings } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const FarmerSignIn = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const FarmerSignIn = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -47,28 +49,39 @@ const FarmerSignIn = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async () => {    
-    if (!validateForm()) {
-      return
-    }
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
 
-    setIsLoading(true)
-    
+    setIsLoading(true);
+
+    const loginData = {
+      email: formData.email.toLowerCase(),
+      password: formData.password
+    };
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      console.log('Farmer login:', formData)
-      // Handle successful login here
-      alert('Farmer login successful!')
+      const response = await axios.post('http://localhost:8000/farmer/signIn', loginData);
+
+      // Successful login
+      // console.log('Farmer login successful:', response.data);
+      alert('Farmer login successful!');
+
+      // Optionally, you can store the farmer data or token in state/localStorage
+      // e.g., localStorage.setItem('farmer', JSON.stringify(response.data.data));
+      navigate('/')
       
     } catch (error) {
-      console.error('Login error:', error)
-      setErrors({ general: 'Login failed. Please try again.' })
+      if (error.response) {
+        console.error('Login failed:', error.response.data);
+        setErrors({ general: error.response.data.data || 'Login failed. Please try again.' });
+      } else {
+        console.error('Login error:', error);
+        setErrors({ general: 'Login failed. Please try again.' });
+      }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="py-10 min-h-fit bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center px-4">
