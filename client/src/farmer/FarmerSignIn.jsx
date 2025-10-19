@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { Mail, Lock, Eye, EyeOff, Settings } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { addRole } from '../utils/roleSlice'
+import { addUser } from '../utils/userSlice'
 
 const FarmerSignIn = () => {
   const [formData, setFormData] = useState({
@@ -61,6 +63,7 @@ const FarmerSignIn = () => {
 
     try {
       const response = await axios.post('http://localhost:8000/farmer/signIn', loginData);
+      // console.log(response.data.data)
 
       // Successful login
       // console.log('Farmer login successful:', response.data);
@@ -68,6 +71,8 @@ const FarmerSignIn = () => {
 
       // Optionally, you can store the farmer data or token in state/localStorage
       // e.g., localStorage.setItem('farmer', JSON.stringify(response.data.data));
+      addRole('farmer')
+      addUser(response.data.data)
       navigate('/')
       
     } catch (error) {
