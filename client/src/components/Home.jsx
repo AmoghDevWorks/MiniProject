@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Sprout, Cloud, TrendingUp, Users, Calendar, MapPin, Thermometer, Droplets } from 'lucide-react'
 import { useSelector } from 'react-redux'
-// import findLocationData from '../utils/findLocationData'
+import findLocationData from '../utils/findLocationData'
 
 const Home = () => {
 
@@ -16,8 +16,8 @@ const Home = () => {
 
   useEffect(()=>{
     const fetchLocationData = async()=>{
-      // const data = await findLocationData()
-      const data = ''
+      const data = await findLocationData()
+      // const data = ''
       setLocationData(data)
     }
 

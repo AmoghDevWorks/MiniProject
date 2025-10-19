@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 
 const signUp = async(req,res)=>{
     const { name, email, password, phoneNo } = req.body;
+    console.log(req.body)
     if(!name || !email || !password || !phoneNo) {
         return res.status(400).json({ data: 'All fields are required' });
     }
@@ -19,6 +20,8 @@ const signUp = async(req,res)=>{
             phoneNo: phoneNo
         });
         await newFarmer.save();
+
+        return res.status(200).json({ data: 'SignUp Successfull'})
     }
     catch(error){
         console.error('Error during signup:', error);

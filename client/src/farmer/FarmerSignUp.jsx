@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { User, Mail, Phone, Lock, Upload, Eye, EyeOff, Leaf, CheckCircle } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const FarmerSignUp = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +17,7 @@ const FarmerSignUp = () => {
   const [errors, setErrors] = useState({})
   const [imagePreview, setImagePreview] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const navigate = useNavigate()
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -121,45 +122,59 @@ const FarmerSignUp = () => {
   }
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      return
-    }
+    // Validate form before submitting
+    if (!validateForm()) return;
 
-    setIsSubmitting(true)
-    
+    setIsSubmitting(true);
+
+    // Prepare the data to match your backend
+    const submitData = {
+      name: formData.name.trim(),
+      email: formData.email.toLowerCase(),
+      password: formData.password,
+      phoneNo: parseInt(formData.phoneNo.replace(/\D/g, ''))
+    };
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      // Here you would typically send the data to your backend
-      const submitData = {
-        name: formData.name.trim(),
-        email: formData.email.toLowerCase(),
-        password: formData.password,
-        phoneNo: parseInt(formData.phoneNo.replace(/\D/g, '')),
-        profileImage: formData.profileImage // This would be converted to base64 or uploaded separately
+      const response = await fetch('http://localhost:8000/farmer/signUp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submitData)
+      });
+
+      const result = await response.json();
+      // console.log(result)
+
+      if (response.ok) {
+        // console.log('Farmer signup successful:', result);
+        alert('Account created successfully! Welcome to our farming community!');
+
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          phoneNo: '',
+          profileImage: null
+        });
+        setImagePreview(null);
+
+        navigate('/')
+      } else {
+        // Backend returned an error
+        console.error('Signup failed:', result);
+        alert(result.data || 'Signup failed. Please try again.');
       }
-      
-      console.log('Farmer signup data:', submitData)
-      alert('Account created successfully! Welcome to our farming community!')
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        phoneNo: '',
-        profileImage: null
-      })
-      setImagePreview(null)
-      
     } catch (error) {
-      alert('An error occurred. Please try again.')
+      console.error('Error during signup:', error);
+      alert('An error occurred. Please try again.');
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12 px-4">
