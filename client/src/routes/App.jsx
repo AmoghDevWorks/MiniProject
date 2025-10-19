@@ -15,6 +15,7 @@ import TechnicianSignIn from '../technician/TechnicianSignIn'
 import About from '../components/About'
 import Contact from '../components/Contact'
 import Dashboard from '../farmer/Dashboard'
+import DiseaseDetection from '../farmer/DiseaseDetection'
 
 const Structure = () => {
   return (
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
       {
         path:'/farmerProfile',
         element:<Dashboard />
+      },
+      {
+        path:'/diseaseDetection',
+        element: <DiseaseDetection />
       }
     ]
   }
