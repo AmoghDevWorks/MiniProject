@@ -78,7 +78,7 @@ const DiseaseDetection = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white p-6">
+    <div className="min-h-screen bg-green-50 p-6">
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
           <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center">

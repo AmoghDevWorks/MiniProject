@@ -36,6 +36,10 @@ const farmerSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
+    IoTDeviceId:{
+        type: String,
+        default: null
+    },
     previousRequests: {
         type: [deviceRequestSchema],
         default: []
