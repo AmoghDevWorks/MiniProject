@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Camera, Upload, X, Loader2 } from 'lucide-react';
+import axios from 'axios'
 
 const DiseaseDetection = () => {
   const [image, setImage] = useState(null);
@@ -56,20 +57,19 @@ const DiseaseDetection = () => {
     setResult(null);
 
     const formData = new FormData();
-    formData.append('image', image);
+    formData.append('file', image);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/predict', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
+      const response = await axios.post(
+        'http://127.0.0.1:5000/api/predict',
+        formData
+      );
+    
+      if (!response.status===200) {
         throw new Error('Failed to get prediction');
       }
 
-      const data = await response.json();
-      setResult(data);
+      setResult(response.data);
     } catch (err) {
       setError(err.message || 'An error occurred while processing the image');
     } finally {

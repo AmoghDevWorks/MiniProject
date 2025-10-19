@@ -1,13 +1,15 @@
 from flask import Flask
+from flask_cors import CORS  # import CORS
+from .routes import register_routes
 
 def create_app():
     app = Flask(__name__)
 
-    # Import and register blueprints
-    from .routes import register_routes
+    # Enable CORS for all routes
+    CORS(app)
+
+    # OR if you want to allow only your React frontend:
+    # CORS(app, origins=["http://localhost:3000"])
+
     register_routes(app)
-
-    from .home_routes import home_bp
-    app.register_blueprint(home_bp)
-
     return app
