@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { addRole } from '../utils/roleSlice'
 import { addUser } from '../utils/userSlice'
+import { useDispatch } from 'react-redux'
 
 const FarmerSignIn = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const FarmerSignIn = () => {
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -71,8 +73,8 @@ const FarmerSignIn = () => {
 
       // Optionally, you can store the farmer data or token in state/localStorage
       // e.g., localStorage.setItem('farmer', JSON.stringify(response.data.data));
-      addRole('farmer')
-      addUser(response.data.data)
+      dispatch(addRole('farmer'))
+      dispatch(addUser(response.data.data))
       navigate('/')
       
     } catch (error) {
