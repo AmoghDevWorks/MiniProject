@@ -46,6 +46,9 @@ const Navbar = () => {
             {/* User Auth Section */}
             {user ? (
               <div className='flex gap-8'>
+                <Link to="/farmerIoT" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
+                  Device Details
+                </Link>
                 <Link to="/diseaseDetection" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
                   Detect
                 </Link>

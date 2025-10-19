@@ -16,6 +16,7 @@ import About from '../components/About'
 import Contact from '../components/Contact'
 import Dashboard from '../farmer/Dashboard'
 import DiseaseDetection from '../farmer/DiseaseDetection'
+import IoTDevice from '../farmer/IoTDevice'
 
 const Structure = () => {
   return (
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
       {
         path:'/diseaseDetection',
         element: <DiseaseDetection />
+      },
+      {
+        path:'/farmerIoT',
+        element: <IoTDevice />
       }
     ]
   }
