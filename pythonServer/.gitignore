@@ -1,0 +1,39 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.egg
+*.egg-info/
+*.manifest
+*.spec
+
+# Distribution / packaging
+build/
+dist/
+*.wheel
+*.tar.gz
+
+# VS Code / IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# uv environment folders (if uv creates a local env)
+.env/
+.venv/
+.uv_env/      # if uv uses its own folder
+
+# Lock files (optional: commit only if you want reproducible env)
+uv.lock
+
+# Logs and temporary files
+*.log
+*.tmp
