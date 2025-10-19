@@ -46,9 +46,8 @@ const Navbar = () => {
             {/* User Auth Section */}
             {user ? (
               <div className='flex gap-8'>
-                <Link to='/diseaseDetection' className="flex items-center space-x-2 bg-green-100 hover:bg-green-200 px-4 py-2 rounded-full cursor-pointer">
-                  <User size={20} className="text-green-600" />
-                  <span className="text-green-700 font-medium">Detect</span>
+                <Link to="/diseaseDetection" className="text-gray-700 hover:text-green-600 font-medium px-3 py-2 rounded-md hover:bg-green-50">
+                  Detect
                 </Link>
                 <Link to='/farmerProfile' className="flex items-center space-x-2 bg-green-100 hover:bg-green-200 px-4 py-2 rounded-full cursor-pointer">
                   <User size={20} className="text-green-600" />
