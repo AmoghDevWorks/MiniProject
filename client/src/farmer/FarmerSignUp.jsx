@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { User, Mail, Phone, Lock, Upload, Eye, EyeOff, Leaf, CheckCircle } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const FarmerSignUp = () => {
   const [formData, setFormData] = useState({
@@ -122,12 +123,11 @@ const FarmerSignUp = () => {
   }
 
   const handleSubmit = async () => {
-    // Validate form before submitting
     if (!validateForm()) return;
 
     setIsSubmitting(true);
 
-    // Prepare the data to match your backend
+    // Prepare data for backend
     const submitData = {
       name: formData.name.trim(),
       email: formData.email.toLowerCase(),
@@ -136,45 +136,37 @@ const FarmerSignUp = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/farmer/signUp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(submitData)
+      const response = await axios.post('http://localhost:8000/farmer/signUp', submitData);
+
+      // Successful signup
+      alert('Account created successfully! Welcome to our farming community!');
+
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        phoneNo: '',
+        profileImage: null
       });
+      setImagePreview(null);
 
-      const result = await response.json();
-      // console.log(result)
-
-      if (response.ok) {
-        // console.log('Farmer signup successful:', result);
-        alert('Account created successfully! Welcome to our farming community!');
-
-        // Reset form
-        setFormData({
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          phoneNo: '',
-          profileImage: null
-        });
-        setImagePreview(null);
-
-        navigate('/')
-      } else {
-        // Backend returned an error
-        console.error('Signup failed:', result);
-        alert(result.data || 'Signup failed. Please try again.');
-      }
+      navigate('/'); // Redirect after signup
     } catch (error) {
-      console.error('Error during signup:', error);
-      alert('An error occurred. Please try again.');
+      if (error.response) {
+        // Backend returned an error
+        console.error('Signup failed:', error.response.data);
+        alert(error.response.data.data || 'Signup failed. Please try again.');
+      } else {
+        // Network or other errors
+        console.error('Error during signup:', error);
+        alert('An error occurred. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
-  };
+    };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12 px-4">
