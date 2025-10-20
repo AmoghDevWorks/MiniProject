@@ -1,16 +1,12 @@
 import React from 'react';
-import { User, Mail, Phone, Calendar, ImageIcon } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { User, Mail, Phone, Calendar } from 'lucide-react';
 
 const FarmerDashboard = () => {
-  // Sample farmer data
-  const farmer = {
-    name: "Rajesh Kumar",
-    email: "rajesh.kumar@email.com",
-    phone: "+91 98765 43210",
-    profileImage: null // Set to null for placeholder
-  };
+  // ✅ Get user data from Redux store
+  const farmer = useSelector((state) => state.user);
 
-  // Sample disease detection history
+  // Sample disease detection history (you may later fetch this from backend)
   const detectionHistory = [
     {
       id: 1,
@@ -35,32 +31,18 @@ const FarmerDashboard = () => {
       result: "Healthy",
       confidence: 97.8,
       isHealthy: true
-    },
-    {
-      id: 4,
-      date: "2025-10-10",
-      image: "🍃",
-      result: "Leaf Curl",
-      confidence: 91.6,
-      isHealthy: false
-    },
-    {
-      id: 5,
-      date: "2025-10-08",
-      image: "🌿",
-      result: "Healthy",
-      confidence: 99.1,
-      isHealthy: true
-    },
-    {
-      id: 6,
-      date: "2025-10-05",
-      image: "🍃",
-      result: "Leaf Curl",
-      confidence: 89.3,
-      isHealthy: false
     }
   ];
+
+  if (!farmer) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+        <p className="text-gray-700 text-lg font-medium">
+          No user is signed in. Please log in to view your dashboard.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
@@ -120,7 +102,7 @@ const FarmerDashboard = () => {
                 </div>
                 <div className="flex-1">
                   <p className="text-xs text-gray-500 mb-0.5">Phone Number</p>
-                  <p className="text-base font-semibold text-gray-800">{farmer.phone}</p>
+                  <p className="text-base font-semibold text-gray-800">{farmer.phoneNo}</p>
                 </div>
               </div>
             </div>
@@ -213,4 +195,5 @@ const FarmerDashboard = () => {
     </div>
   );
 }
+
 export default FarmerDashboard;
