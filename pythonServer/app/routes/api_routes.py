@@ -28,7 +28,7 @@ def predict_leaf(img_path):
     pred = model.predict(img_array)[0][0]
 
     # Interpret result
-    if pred >= 0.5:
+    if pred <= 0.5:
         return "Disease", float(pred)
     else:
         return "Healthy", float(pred)
