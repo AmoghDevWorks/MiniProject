@@ -44,7 +44,7 @@ from ..utils.embedding_utils import get_embeddings_server
 
 @rag_bp.route('/embeddingHF', methods=['POST'])
 def embeddingHF():
-    content = 'hello world'
+    content = 'i am amogh'
 
     result = get_embeddings_server(content=content)
 
