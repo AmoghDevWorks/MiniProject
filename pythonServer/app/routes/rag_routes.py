@@ -38,3 +38,14 @@ def GeminiResponse():
     # Call your Gemini helper
     response_text = ask_gemini(dummy_context.strip(), dummy_query.strip())
     return response_text
+
+# FOR TESTING PART
+from ..utils.embedding_utils import get_embeddings_server
+
+@rag_bp.route('/embeddingHF', methods=['POST'])
+def embeddingHF():
+    content = 'hello world'
+
+    result = get_embeddings_server(content=content)
+
+    return result
