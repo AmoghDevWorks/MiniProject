@@ -29,9 +29,11 @@ def predict_leaf(img_path):
 
     # Interpret result
     if pred <= 0.5:
-        return "Disease", float(pred)
+        pred_percent = (1 - float(pred))  # flip for disease
+        return "Disease", pred_percent
     else:
-        return "Healthy", float(pred)
+        pred_percent = float(pred)  # healthy as is
+        return "Healthy", pred_percent
 
 # API route
 @api_bp.route('/predict', methods=['POST'])
