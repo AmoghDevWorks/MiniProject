@@ -29,7 +29,7 @@ def predict_leaf(img_path):
 
     # Interpret result
     if pred <= 0.5:
-        return "Disease", float(pred)
+        return "Disease", 1-float(pred)
     else:
         return "Healthy", float(pred)
 
