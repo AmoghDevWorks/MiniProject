@@ -27,7 +27,7 @@ dist/
 Thumbs.db
 
 # uv environment folders (if uv creates a local env)
-.env/
+.env
 .venv/
 .uv_env/      # if uv uses its own folder
 
