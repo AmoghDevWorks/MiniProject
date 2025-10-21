@@ -79,10 +79,48 @@ def ingestion():
             os.remove(file_path)
 
 
+# ============================================================
+# RETRIEVAL ROUTE
+# ============================================================
 @rag_bp.route('/retrieval', methods=['POST'])
 def retrieval():
-    return jsonify({"message": "RAG retrieval endpoint (not implemented yet)"}), 200
+    """Retrieve relevant chunks from Qdrant and get Gemini-based response."""
+    try:
+        data = request.get_json()
+        query = data.get("query")
 
+        if not query:
+            return jsonify({"error": "Missing 'query' in request body"}), 400
+
+        # Lazy imports
+        from ..utils.embedding_utils import get_embeddings_server
+        from ..utils.gemini_utils import ask_gemini
+
+        print("🔍 Searching Qdrant for relevant chunks...")
+        query_vector = get_embeddings_server([query])[0]
+
+        qdrant_instance = get_qdrant()
+        results = qdrant_instance.search_vectors(query_vector, top_k=5)
+
+        if not results:
+            return jsonify({"message": "No matching context found in Qdrant."}), 200
+
+        # Combine retrieved chunks
+        context = "\n".join([r["metadata"].get("page_content", "") for r in results])
+        
+
+        print("🧠 Sending context + query to Gemini Flash for analysis...")
+        answer = ask_gemini(context, query)
+
+        return jsonify({
+            "query": query,
+            "context_snippets": len(results),
+            "response": answer
+        }), 200
+
+    except Exception as e:
+        print("❌ Retrieval failed:", str(e))
+        return jsonify({"error": str(e)}), 500
 
 # FOR TESTING PART
 # from ..utils.gemini_utils import ask_gemini
