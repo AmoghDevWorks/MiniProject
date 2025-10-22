@@ -1,5 +1,6 @@
 const farmermodel= require('../models/farmer')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const signUp = async(req,res)=>{
     const { name, email, password, phoneNo } = req.body;
@@ -29,26 +30,45 @@ const signUp = async(req,res)=>{
     }
 }
 
-const signIn = async(req,res)=>{
+const signIn = async (req, res) => {
     const { email, password } = req.body;
-    if(!email || !password) {
-        return res.status(400).json({ data: 'Email and password are required' });
+
+    if (!email || !password) {
+        return res.status(400).json({ data: "Email and password are required" });
     }
-    try{
-        const farmer = await farmermodel.findOne({ email: email });
-        if(!farmer){
-            return res.status(404).json({ data: 'Farmer not found' });
+
+    try {
+        const farmer = await farmermodel.findOne({ email });
+        if (!farmer) {
+            return res.status(404).json({ data: "Farmer not found" });
         }
+
         const isPasswordValid = await bcrypt.compare(password, farmer.password);
-        if(!isPasswordValid){
-            return res.status(401).json({ data: 'Invalid credentials' });
+        if (!isPasswordValid) {
+            return res.status(401).json({ data: "Invalid credentials" });
         }
-        return res.status(200).json({ msg: 'SignIn successful', data: farmer });
+
+        const token = jwt.sign(
+            { id: farmer._id, email: farmer.email },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRES_IN || "1d" }
+        );
+
+        res.cookie("authToken", token, {
+            httpOnly: true, 
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000 
+        });
+
+        return res.status(200).json({
+            msg: "SignIn successful",
+            data: farmer
+        });
+
+    } catch (error) {
+        console.error("Error during signin:", error);
+        return res.status(500).json({ data: "Internal server error" });
     }
-    catch(error){
-        console.error('Error during signin:', error);
-        return res.status(500).json({ data: 'Internal server error' });
-    }
-}
+};
 
 module.exports ={signUp, signIn};
