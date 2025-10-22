@@ -10,6 +10,7 @@ const DiseaseDetection = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [RAGData,setRAGData] = useState(null);
   
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
@@ -48,12 +49,16 @@ const DiseaseDetection = () => {
     setPreview(null);
     setResult(null);
     setError(null);
+    setRAGData(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
     if (cameraInputRef.current) cameraInputRef.current.value = '';
   };
 
   const handleRAGPart = async() => {
     if(result === null) return
+
+    setError(null)
+    setLoading(true)
 
     //retrieve the data here from IoT
     const sensorData = {
@@ -87,8 +92,8 @@ const DiseaseDetection = () => {
         throw new Error('Failed to get prediction');
       }
 
-      console.log(response.data.response)
-
+      setRAGData(response.data.response)
+      setLoading(false)
     }catch(e){
       setError(e.message || 'An error occurred while retrieving the data');
     }
@@ -253,18 +258,26 @@ const DiseaseDetection = () => {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={handleRAGPart}
-                className="mt-6 w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-              >
-                Analyse the Result
-              </button>
+              {RAGData===null && 
+                <button
+                  onClick={handleRAGPart}
+                  className="mt-6 w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Analyse the Result
+                </button>
+              }
               <button
                 onClick={handleRemoveImage}
                 className="mt-6 w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"
               >
                 Analyze Another Image
               </button>
+              {RAGData &&
+                <div className='mt-10 border-2 border-green-500 p-4 rounded-md'>
+                  <h1 className='text-center text-3xl mb-2 font-semibold'>Expertise Analysis</h1>
+                  {RAGData}
+                </div>
+              }
             </div>
           )}
         </div>
