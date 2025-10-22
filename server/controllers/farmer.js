@@ -1,6 +1,7 @@
 const farmermodel= require('../models/farmer')
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const farmerModel = require('../models/farmer');
 
 const signUp = async(req,res)=>{
     const { name, email, password, phoneNo } = req.body;
@@ -71,4 +72,39 @@ const signIn = async (req, res) => {
     }
 };
 
-module.exports ={signUp, signIn};
+const saveDetectionData = async(req,res) => {
+    try{
+        const { farmerId,result, confidence, RAG_response } = req.body
+
+        if(!farmerId){
+            return res.status(404).json({ data:"Login Required" })
+        }
+
+        if(!result || !confidence){
+            return res.status(404).json({ data:"Result and Confidence Not found" })
+        }
+
+        const newData = {
+            result,
+            confidence,
+            RAG_response : RAG_response | ''
+        }
+
+        const updateFarmer = await farmerModel.findByIdAndUpdate(
+            farmerId,
+            { $push: { imageProcessRequests:newData } },
+            { new: true }
+        )
+
+        if(!updateFarmer){
+            return res.status(404).json({ success:false, data:"farmer Not Found" })
+        }
+
+        return res.status(200).json({ data : 'Detection Data saved successfully' })
+
+    }catch(err){
+        return res.status(500).json({ data : 'Internal Server Error' })
+    }
+}
+
+module.exports ={signUp, signIn, saveDetectionData};
