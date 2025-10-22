@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+// for IoT 
 const deviceRequestSchema = new mongoose.Schema({
     time: { type: String, default: () => new Date().toLocaleTimeString() },
     date: { type: String, default: () => new Date().toLocaleDateString() },
@@ -8,10 +9,12 @@ const deviceRequestSchema = new mongoose.Schema({
     workCompleted: { type: Boolean, default:false }
 }, { _id: false });
 
+// for user disease detection management
 const imageProcessRequestSchema = new mongoose.Schema({
-    image: { type: String, required: true },
+    date: { type: String, default: ()=> new Date().toLocaleDateString() },
     result: { type: String, required: true },
-    date: { type: String, default: ()=> new Date().toLocaleDateString() }
+    confidence: { type: String, required: true},
+    RAG_Response: { type: String, default:''}
 }, { _id: false });
 
 const farmerSchema = new mongoose.Schema({
