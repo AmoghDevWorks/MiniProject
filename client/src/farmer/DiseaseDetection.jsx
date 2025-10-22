@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Camera, Upload, X, Loader2 } from 'lucide-react';
 import axios from 'axios'
+import { useSelector } from 'react-redux'
 
 const DiseaseDetection = () => {
   const [image, setImage] = useState(null);
@@ -12,6 +13,8 @@ const DiseaseDetection = () => {
   
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+
+  const IsIoTAvailable = useSelector((state=>state.user?.IoTDeviceId))
 
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
@@ -48,6 +51,48 @@ const DiseaseDetection = () => {
     if (fileInputRef.current) fileInputRef.current.value = '';
     if (cameraInputRef.current) cameraInputRef.current.value = '';
   };
+
+  const handleRAGPart = async() => {
+    if(result === null) return
+
+    //retrieve the data here from IoT
+    const sensorData = {
+      temperature: 28.5, // example value
+      moisture: 65,      // example value
+      npk: "12-8-10"     // example value
+    };
+
+    const DetectionQuery = `The result of the model regarding the uploaded image is label: ${result.label} with a confidence of ${(result.confidence * 100).toFixed(2)}%.`;
+
+    const IoTQuery = IsIoTAvailable
+      ? `
+        The response of the IoT sensors are:
+        1. Temperature: ${sensorData.temperature} °C
+        2. Moisture: ${sensorData.moisture} %
+        3. NPK: ${sensorData.npk}
+      `
+      : "IoT sensor data is not available.";
+        
+    const jsonForQuery = {
+      "query" : `${DetectionQuery}\n${IoTQuery}`
+    } 
+
+    try{
+      const response = await axios.post(
+        'http://127.0.0.1:5000/rag/retrieval',
+        jsonForQuery
+      )
+
+      if (!response.status===200) {
+        throw new Error('Failed to get prediction');
+      }
+
+      console.log(response.data.response)
+
+    }catch(e){
+      setError(e.message || 'An error occurred while retrieving the data');
+    }
+  }
 
   const handlePredict = async () => {
     if (!image) return;
@@ -208,6 +253,12 @@ const DiseaseDetection = () => {
                   </div>
                 </div>
               </div>
+              <button
+                onClick={handleRAGPart}
+                className="mt-6 w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+              >
+                Analyse the Result
+              </button>
               <button
                 onClick={handleRemoveImage}
                 className="mt-6 w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"
