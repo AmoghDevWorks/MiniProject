@@ -129,6 +129,19 @@ const DiseaseDetection = () => {
 
   return (
     <div className="min-h-screen bg-green-50 p-6">
+
+      {/* Loader */}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center backdrop-blur-md bg-white/10">
+          <div className="p-6 rounded-2xl bg-white/30 border border-white/40 shadow-lg backdrop-blur-xl flex flex-col items-center justify-center">
+            <Loader2 className="w-10 h-10 text-green-700 animate-spin mb-3" />
+            <p className="text-green-900 font-medium tracking-wide lowercase">
+              loading
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
           <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center">
