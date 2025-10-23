@@ -16,6 +16,7 @@ const DiseaseDetection = () => {
   const cameraInputRef = useRef(null);
 
   const IsIoTAvailable = useSelector((state=>state.user?.IoTDeviceId))
+  const farmerId = useSelector((state=>state.user?._id))
 
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
@@ -54,74 +55,88 @@ const DiseaseDetection = () => {
     if (cameraInputRef.current) cameraInputRef.current.value = '';
   };
 
-  const handleRAGPart = async() => {
-    if(result === null) return
-
-    setError(null)
-    setLoading(true)
-
-    //retrieve the data here from IoT
-    const sensorData = {
-      temperature: 28.5, // example value
-      moisture: 65,      // example value
-      npk: "12-8-10"     // example value
-    };
-
-    const DetectionQuery = `The result of the model regarding the uploaded image is label: ${result.label} with a confidence of ${(result.confidence * 100).toFixed(2)}%.`;
-
-    const IoTQuery = IsIoTAvailable
-      ? `
-        The response of the IoT sensors are:
-        1. Temperature: ${sensorData.temperature} °C
-        2. Moisture: ${sensorData.moisture} %
-        3. NPK: ${sensorData.npk}
-      `
-      : "IoT sensor data is not available.";
-        
-    const jsonForQuery = {
-      "query" : `${DetectionQuery}\n${IoTQuery}`
-    } 
-
-    try{
-      const response = await axios.post(
-        'http://127.0.0.1:5000/rag/retrieval',
-        jsonForQuery
-      )
-
-      if (!response.status===200) {
-        throw new Error('Failed to get prediction');
-      }
-
-      setRAGData(response.data.response)
-      setLoading(false)
-    }catch(e){
-      setError(e.message || 'An error occurred while retrieving the data');
-    }
-  }
-
   const handlePredict = async () => {
     if (!image) return;
 
     setLoading(true);
     setError(null);
     setResult(null);
-
-    const formData = new FormData();
-    formData.append('file', image);
+    setRAGData(null);
 
     try {
-      const response = await axios.post(
+      // 1️⃣ Step 1: Send image to prediction API
+      const formData = new FormData();
+      formData.append('file', image);
+
+      const predictionResponse = await axios.post(
         'http://127.0.0.1:5000/api/predict',
         formData
       );
-    
-      if (!response.status===200) {
+
+      if (predictionResponse.status !== 200) {
         throw new Error('Failed to get prediction');
       }
 
-      setResult(response.data);
+      const resultData = predictionResponse.data;
+      setResult(resultData);
+
+      // 2️⃣ Step 2: Retrieve IoT data (or mock if not connected)
+      const sensorData = {
+        temperature: 28.5, // example value
+        moisture: 65,      // example value
+        npk: "12-8-10"     // example value
+      };
+
+      const DetectionQuery = `The result of the model regarding the uploaded image is label: ${resultData.label} with a confidence of ${(resultData.confidence * 100).toFixed(2)}%.`;
+
+      const IoTQuery = IsIoTAvailable
+        ? `
+          The response of the IoT sensors are:
+          1. Temperature: ${sensorData.temperature} °C
+          2. Moisture: ${sensorData.moisture} %
+          3. NPK: ${sensorData.npk}
+        `
+        : "IoT sensor data is not available.";
+
+      const jsonForQuery = {
+        query: `${DetectionQuery}\n${IoTQuery}`
+      };
+
+      // 3️⃣ Step 3: Send data to RAG retrieval API
+      const ragResponse = await axios.post(
+        'http://127.0.0.1:5000/rag/retrieval',
+        jsonForQuery
+      );
+
+      if (ragResponse.status !== 200) {
+        throw new Error('Failed to get RAG retrieval response');
+      }
+
+      const ragData = ragResponse.data.response;
+      setRAGData(ragData);
+
+      // 4️⃣ Step 4: Save detection data in your database
+      const saveData = {
+        farmerId, // must be available from your state or auth
+        result: resultData.label,
+        confidence: resultData.confidence,
+        RAG_response: ragData
+      };
+
+      const saveResponse = await axios.post(
+        'http://localhost:8000/farmer/saveDetectionData',
+        saveData
+      );
+
+      if (saveResponse.status !== 200) {
+        throw new Error('Failed to save detection data');
+      }
+
+      console.log("✅ Detection data saved successfully:", saveResponse.data);
+
     } catch (err) {
-      setError(err.message || 'An error occurred while processing the image');
+      setError(err.message || 'An error occurred during prediction or retrieval');
+      console.error("❌ Error in handlePredict:", err);
     } finally {
       setLoading(false);
     }
@@ -271,14 +286,6 @@ const DiseaseDetection = () => {
                   </div>
                 </div>
               </div>
-              {RAGData===null && 
-                <button
-                  onClick={handleRAGPart}
-                  className="mt-6 w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-                >
-                  Analyse the Result
-                </button>
-              }
               <button
                 onClick={handleRemoveImage}
                 className="mt-6 w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"

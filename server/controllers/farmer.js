@@ -76,18 +76,23 @@ const saveDetectionData = async(req,res) => {
     try{
         const { farmerId,result, confidence, RAG_response } = req.body
 
+        console.log(req.body)
+
         if(!farmerId){
             return res.status(404).json({ data:"Login Required" })
         }
 
-        if(!result || !confidence){
+        if(!result || !confidence || !RAG_response){
             return res.status(404).json({ data:"Result and Confidence Not found" })
         }
 
+        const value = parseFloat(confidence)
+        const formattedConfidence = value*100
+
         const newData = {
             result,
-            confidence,
-            RAG_response : RAG_response | ''
+            confidence : formattedConfidence,
+            RAG_Response : RAG_response
         }
 
         const updateFarmer = await farmerModel.findByIdAndUpdate(

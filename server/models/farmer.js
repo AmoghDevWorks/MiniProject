@@ -14,7 +14,7 @@ const imageProcessRequestSchema = new mongoose.Schema({
     date: { type: String, default: ()=> new Date().toLocaleDateString() },
     result: { type: String, required: true },
     confidence: { type: String, required: true},
-    RAG_Response: { type: String, default:''}
+    RAG_Response: { type: String, required: true}
 }, { _id: false });
 
 const farmerSchema = new mongoose.Schema({
