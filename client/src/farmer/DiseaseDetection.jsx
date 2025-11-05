@@ -14,7 +14,7 @@ const DiseaseDetection = () => {
   
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
-
+  
   const IsIoTAvailable = useSelector((state=>state.user?.IoTDeviceId))
   const farmerId = useSelector((state=>state.user?._id))
 
@@ -141,6 +141,36 @@ const DiseaseDetection = () => {
       console.error("❌ Error in handlePredict:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // <-- added helper: returns hex color by interpolating two hex colors
+  const lerpHex = (a, b, t) => {
+    const ah = a.replace('#',''), bh = b.replace('#','');
+    const ar = parseInt(ah.substring(0,2),16), ag = parseInt(ah.substring(2,4),16), ab = parseInt(ah.substring(4,6),16);
+    const br = parseInt(bh.substring(0,2),16), bg = parseInt(bh.substring(2,4),16), bb = parseInt(bh.substring(4,6),16);
+    const rr = Math.round(ar + (br - ar) * t).toString(16).padStart(2,'0');
+    const rg = Math.round(ag + (bg - ag) * t).toString(16).padStart(2,'0');
+    const rb = Math.round(ab + (bb - ab) * t).toString(16).padStart(2,'0');
+    return `#${rr}${rg}${rb}`;
+  };
+
+  // color helper: pick fixed colors by confidence bands for clearer intensity differences
+  const getProgressColor = (label, confidence) => {
+    const lab = (label || '').toString().toLowerCase();
+    const isHealthy = lab.includes('healthy') || lab.includes('no disease') || lab === 'healthy';
+    const c = Math.max(0, Math.min(1, confidence ?? 0)) * 100; // 0..100
+
+    if (isHealthy) {
+      if (c >= 90) return '#145A32'; // dark green
+      if (c >= 80) return '#2E7D32'; // medium green
+      if (c >= 70) return '#66BB6A'; // light green
+      return '#DFF7E6';             // very light green / neutral
+    } else {
+      if (c >= 90) return '#7F0000'; // very dark red
+      if (c >= 80) return '#FF5722'; // orange-ish for high-but-not-max disease confidence
+      if (c >= 70) return '#F39C12'; // amber / less intense
+      return '#F8D7DA';             // pale red / muted
     }
   };
 
@@ -282,8 +312,11 @@ const DiseaseDetection = () => {
                 <div className="mt-4">
                   <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                     <div
-                      className="bg-green-600 h-full rounded-full transition-all duration-500"
-                      style={{ width: `${result.confidence * 100}%` }}
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${result.confidence * 100}%`,
+                        background: getProgressColor(result.label, result.confidence)
+                      }}
                     />
                   </div>
                 </div>
@@ -296,10 +329,10 @@ const DiseaseDetection = () => {
               </button>
               {RAGData &&
                 <div className='mt-10 border-2 border-green-500 p-4 rounded-md'>
-                  <h1 className='text-center text-3xl mb-2 font-semibold'>Expertise Analysis</h1>
-                  <p>{RAGData.notes}</p>
+                  <h1 className='text-center text-3xl mb-2 font-bold underline underline-offset-2'>Expertise Analysis</h1>
+                  <p className='text-'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{RAGData.notes}</p>
                   <div>
-                    <h2 className="text-2xl mb-3 font-semibold text-blue-300">
+                    <h2 className="text-2xl mt-8 mb-2 font-semibold text-black-300">
                       Recommendations
                     </h2>
 
@@ -308,20 +341,20 @@ const DiseaseDetection = () => {
                         RAGData.recommendations.map((rec, index) => (
                           <li
                             key={index}
-                            className="p-4 border border-green-400 rounded-lg hover:bg-green-900/30 transition"
+                            className="p-4 border border-green-400 rounded-lg transition"
                           >
                             <p className="font-semibold text-lg">
-                              <span className="text-green-400">• Action:</span> {rec.action}
+                              • <span className="text-black underline underline-offset-2 text-xl">Action</span>: {rec.action}
                             </p>
                             {rec.reason && (
-                              <p className="text-gray-300 ml-4">
-                                <span className="text-blue-300">Reason:</span> {rec.reason}
+                              <p className="text-slate-900 ml-4">
+                                <span className="text-slate-950 text-lg">Reason:</span> {rec.reason}
                               </p>
                             )}
                           </li>
                         ))
                       ) : (
-                        <p className="text-gray-400 italic">No recommendations available.</p>
+                        <p className="text-slate-800 italic">No recommendations available.</p>
                       )}
                     </ul>
                   </div>
