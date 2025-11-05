@@ -292,7 +292,7 @@ const DiseaseDetection = () => {
 
           {/* Results */}
           {result && (
-            <div className="mt-6 bg-green-100 border border-green-600 rounded-xl p-6">
+            <div className={`mt-6 ${result.label == 'Disease' ? 'bg-red-100' : 'bg-green-100'} border ${result.label == 'Disease' ?"border-red-600" : "border-green-600" } rounded-xl p-6`}>
               <h3 className="text-lg font-bold text-gray-800 mb-4">
                 Detection Results
               </h3>
@@ -305,7 +305,7 @@ const DiseaseDetection = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 font-medium">Confidence:</span>
-                  <span className="text-green-600 font-bold text-lg">
+                  <span className={`${result.label == 'Disease' ? 'text-red-900' : 'text-green-900'} font-bold text-lg`}>
                     {(result.confidence * 100).toFixed(2)}%
                   </span>
                 </div>
@@ -328,7 +328,7 @@ const DiseaseDetection = () => {
                 Analyze Another Image
               </button>
               {RAGData &&
-                <div className='mt-10 border-2 border-green-500 p-4 rounded-md'>
+                <div className={`mt-10 border-2 ${result.label == 'Disease' ?"border-red-500" : "border-green-500" } p-4 rounded-md`}>
                   <h1 className='text-center text-3xl mb-2 font-bold underline underline-offset-2'>Expertise Analysis</h1>
                   <p className='text-'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{RAGData.notes}</p>
                   <div>
@@ -341,7 +341,7 @@ const DiseaseDetection = () => {
                         RAGData.recommendations.map((rec, index) => (
                           <li
                             key={index}
-                            className="p-4 border border-green-400 rounded-lg transition"
+                            className={`p-4 border ${result.label == 'Disease' ?"border-red-600" : "border-green-600" } rounded-lg transition`}
                           >
                             <p className="font-semibold text-lg">
                               • <span className="text-black underline underline-offset-2 text-xl">Action</span>: {rec.action}
