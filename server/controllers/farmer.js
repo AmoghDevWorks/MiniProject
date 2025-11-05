@@ -74,7 +74,7 @@ const signIn = async (req, res) => {
 
 const saveDetectionData = async(req,res) => {
     try{
-        const { farmerId,result, confidence, RAG_response } = req.body
+        const { farmerId,result, confidence, notes, recommendation } = req.body
 
         console.log(req.body)
 
@@ -82,7 +82,7 @@ const saveDetectionData = async(req,res) => {
             return res.status(404).json({ data:"Login Required" })
         }
 
-        if(!result || !confidence || !RAG_response){
+        if(!result || !confidence || !notes || !recommendation){
             return res.status(404).json({ data:"Result and Confidence Not found" })
         }
 
@@ -92,7 +92,8 @@ const saveDetectionData = async(req,res) => {
         const newData = {
             result,
             confidence : formattedConfidence,
-            RAG_Response : RAG_response
+            notes,
+            recommendation
         }
 
         const updateFarmer = await farmerModel.findByIdAndUpdate(

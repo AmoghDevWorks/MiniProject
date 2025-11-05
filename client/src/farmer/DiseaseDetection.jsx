@@ -121,7 +121,8 @@ const DiseaseDetection = () => {
         farmerId, // must be available from your state or auth
         result: resultData.label,
         confidence: resultData.confidence,
-        RAG_response: ragData
+        notes: ragData.notes,
+        recommendation: ragData.recommendations
       };
 
       const saveResponse = await axios.post(

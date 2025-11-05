@@ -9,12 +9,18 @@ const deviceRequestSchema = new mongoose.Schema({
     workCompleted: { type: Boolean, default:false }
 }, { _id: false });
 
+const RecommendataionSchema = new mongoose.Schema({
+    action: { type: String, required: true},
+    reason: { type: String, default: null}
+},{_id: false})
+
 // for user disease detection management
 const imageProcessRequestSchema = new mongoose.Schema({
     date: { type: String, default: ()=> new Date().toLocaleDateString() },
     result: { type: String, required: true },
     confidence: { type: String, required: true},
-    RAG_Response: { type: String, required: true}
+    notes: { type: String, required: true},
+    recommendation: [RecommendataionSchema]
 }, { _id: false });
 
 const farmerSchema = new mongoose.Schema({
