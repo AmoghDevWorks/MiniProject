@@ -113,6 +113,7 @@ const DiseaseDetection = () => {
       }
 
       const ragData = ragResponse.data.response;
+      // console.log(ragData)
       setRAGData(ragData);
 
       // 4️⃣ Step 4: Save detection data in your database
@@ -295,7 +296,34 @@ const DiseaseDetection = () => {
               {RAGData &&
                 <div className='mt-10 border-2 border-green-500 p-4 rounded-md'>
                   <h1 className='text-center text-3xl mb-2 font-semibold'>Expertise Analysis</h1>
-                  {RAGData}
+                  <p>{RAGData.notes}</p>
+                  <div>
+                    <h2 className="text-2xl mb-3 font-semibold text-blue-300">
+                      Recommendations
+                    </h2>
+
+                    <ul className="space-y-3">
+                      {RAGData.recommendations && RAGData.recommendations.length > 0 ? (
+                        RAGData.recommendations.map((rec, index) => (
+                          <li
+                            key={index}
+                            className="p-4 border border-green-400 rounded-lg hover:bg-green-900/30 transition"
+                          >
+                            <p className="font-semibold text-lg">
+                              <span className="text-green-400">• Action:</span> {rec.action}
+                            </p>
+                            {rec.reason && (
+                              <p className="text-gray-300 ml-4">
+                                <span className="text-blue-300">Reason:</span> {rec.reason}
+                              </p>
+                            )}
+                          </li>
+                        ))
+                      ) : (
+                        <p className="text-gray-400 italic">No recommendations available.</p>
+                      )}
+                    </ul>
+                  </div>
                 </div>
               }
             </div>
