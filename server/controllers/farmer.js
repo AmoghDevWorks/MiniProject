@@ -113,4 +113,35 @@ const saveDetectionData = async(req,res) => {
     }
 }
 
-module.exports ={signUp, signIn, saveDetectionData};
+const getPreviousDetections = async (req, res, next) => {
+  const { farmerId } = req.params;
+
+  if (!farmerId) {
+    return res.status(400).json({ data: "Please login or provide a valid farmer ID." });
+  }
+
+  try {
+    const farmerData = await farmerModel.findById(farmerId);
+
+    if (!farmerData) {
+      return res.status(404).json({ data: "Farmer not found." });
+    }
+
+    const detections = farmerData.imageProcessRequests || [];
+
+    const sortedDetections = detections
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 10);
+
+    return res.status(200).json({
+      success: true,
+      message: "Data fetched successfully.",
+      detections: sortedDetections,
+    });
+
+  } catch (e) {
+    return res.status(500).json({ data: "Internal Server Error" });
+  }
+};
+
+module.exports ={signUp, signIn, saveDetectionData,getPreviousDetections };

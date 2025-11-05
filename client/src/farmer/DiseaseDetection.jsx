@@ -143,18 +143,7 @@ const DiseaseDetection = () => {
       setLoading(false);
     }
   };
-
-  // <-- added helper: returns hex color by interpolating two hex colors
-  const lerpHex = (a, b, t) => {
-    const ah = a.replace('#',''), bh = b.replace('#','');
-    const ar = parseInt(ah.substring(0,2),16), ag = parseInt(ah.substring(2,4),16), ab = parseInt(ah.substring(4,6),16);
-    const br = parseInt(bh.substring(0,2),16), bg = parseInt(bh.substring(2,4),16), bb = parseInt(bh.substring(4,6),16);
-    const rr = Math.round(ar + (br - ar) * t).toString(16).padStart(2,'0');
-    const rg = Math.round(ag + (bg - ag) * t).toString(16).padStart(2,'0');
-    const rb = Math.round(ab + (bb - ab) * t).toString(16).padStart(2,'0');
-    return `#${rr}${rg}${rb}`;
-  };
-
+  
   // color helper: pick fixed colors by confidence bands for clearer intensity differences
   const getProgressColor = (label, confidence) => {
     const lab = (label || '').toString().toLowerCase();
