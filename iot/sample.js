@@ -17,44 +17,46 @@ const filePath = path.join(__dirname, 'sensor_data.txt');
 const options = {
   username,
   password,
-  rejectUnauthorized: false // Skip cert check
+  rejectUnauthorized: false // Skip SSL cert check for HiveMQ Cloud
 };
 
-// Connect to HiveMQ Cloud
 const client = mqtt.connect(broker, options);
+
+let lastSaveTime = 0; // Track last message save time
 
 client.on('connect', () => {
   console.log('✅ Connected to HiveMQ Cloud');
 
   // Subscribe to topic
   client.subscribe(topic, (err) => {
-    if (err) {
-      console.error('❌ Subscription error:', err);
-    } else {
-      console.log(`📡 Subscribed to topic: ${topic}`);
-    }
+    if (err) console.error('❌ Subscription error:', err);
+    else console.log(`📡 Subscribed to topic: ${topic}`);
   });
 });
 
-// Handle incoming messages
 client.on('message', (topic, message) => {
-  const data = message.toString();
-  const timestamp = new Date().toISOString();
-  const logEntry = `[${timestamp}] ${topic}: ${data}\n`;
+  const currentTime = Date.now();
 
-  console.log(`💾 Received message: ${logEntry}`);
+  // Only log once every 5 minutes (300000 ms)
+  if (currentTime - lastSaveTime >= 300000) {
+    const data = message.toString();
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${topic}: ${data}\n`;
 
-  // Append data to file
-  fs.appendFile(filePath, logEntry, (err) => {
-    if (err) {
-      console.error('❌ Error writing to file:', err);
-    } else {
-      console.log('✅ Data written to sensor_data.txt');
-    }
-  });
+    console.log(`💾 Received message:\n${logEntry}`);
+
+    // Append data to file
+    fs.appendFile(filePath, logEntry, (err) => {
+      if (err) console.error('❌ Error writing to file:', err);
+      else console.log('✅ Data written to sensor_data.txt');
+    });
+
+    lastSaveTime = currentTime; // update timestamp
+  } else {
+    console.log('⏳ Ignoring message (within 5-minute window)');
+  }
 });
 
-// Handle connection errors
 client.on('error', (err) => {
   console.error('⚠️ MQTT error:', err);
 });
