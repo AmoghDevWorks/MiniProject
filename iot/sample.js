@@ -20,6 +20,7 @@ const options = {
   rejectUnauthorized: false // Skip SSL cert check for HiveMQ Cloud
 };
 
+// Connect to HiveMQ
 const client = mqtt.connect(broker, options);
 
 let lastSaveTime = 0; // Track last message save time
