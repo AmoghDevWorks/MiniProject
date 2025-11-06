@@ -1,42 +1,60 @@
 const mqtt = require('mqtt');
+const fs = require('fs');
+const path = require('path');
 
 // HiveMQ Cloud connection info
 const broker = 'mqtts://6db8e3ab3e1f49e996390fcd994f9a27.s1.eu.hivemq.cloud:8883';
-const username = '';
-const password = ''; // HiveMQ Cloud password
+const username = 'Darshu';
+const password = 'DARSHANhmd1@'; // HiveMQ Cloud password
 
 // Topic to subscribe
-const topic = 'test/topic';
+const topic = 'esp32/sensors';
+
+// File path to save data
+const filePath = path.join(__dirname, 'sensor_data.txt');
 
 // Connect options
 const options = {
-    username: username,
-    password: password,
-    rejectUnauthorized: false // set to true if you have CA certificate
+  username,
+  password,
+  rejectUnauthorized: false // Skip cert check
 };
 
 // Connect to HiveMQ Cloud
 const client = mqtt.connect(broker, options);
 
 client.on('connect', () => {
-    console.log('Connected to HiveMQ Cloud');
+  console.log('✅ Connected to HiveMQ Cloud');
 
-    // Subscribe to the topic
-    client.subscribe(topic, (err) => {
-        if (err) {
-            console.error('Subscription error:', err);
-        } else {
-            console.log(`Subscribed to topic: ${topic}`);
-        }
-    });
+  // Subscribe to topic
+  client.subscribe(topic, (err) => {
+    if (err) {
+      console.error('❌ Subscription error:', err);
+    } else {
+      console.log(`📡 Subscribed to topic: ${topic}`);
+    }
+  });
 });
 
 // Handle incoming messages
 client.on('message', (topic, message) => {
-    console.log(`Received message on ${topic}: ${message.toString()}`);
+  const data = message.toString();
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] ${topic}: ${data}\n`;
+
+  console.log(`💾 Received message: ${logEntry}`);
+
+  // Append data to file
+  fs.appendFile(filePath, logEntry, (err) => {
+    if (err) {
+      console.error('❌ Error writing to file:', err);
+    } else {
+      console.log('✅ Data written to sensor_data.txt');
+    }
+  });
 });
 
-// Handle errors
+// Handle connection errors
 client.on('error', (err) => {
-    console.error('MQTT error:', err);
+  console.error('⚠️ MQTT error:', err);
 });
