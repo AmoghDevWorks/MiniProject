@@ -1,165 +1,139 @@
 #include <WiFi.h>
-#include <WiFiClientSecure.h>
 #include <PubSubClient.h>
-#include <DHT.h>
+#include <HardwareSerial.h>
+#include <WiFiClientSecure.h>
+#include "DHT.h"
 
-// -----------------------------
-// Sensor setup
-// -----------------------------
-#define DHTPIN 4       // DHT11 data pin connected to GPIO 4
+// ==== PIN CONFIGURATION ====
+#define DHTPIN 25
 #define DHTTYPE DHT11
-#define MOISTURE_PIN 34 // Analog pin for soil moisture sensor
+#define MOISTURE_PIN 34
 
 DHT dht(DHTPIN, DHTTYPE);
+HardwareSerial mod(2); // RX2=16, TX2=17 for NPK
 
-// -----------------------------
-// Wi-Fi credentials
-// -----------------------------
-const char* ssid = "v";          
-const char* password = "12345678";  
-
-// -----------------------------
-// HiveMQ Cloud credentials
-// -----------------------------
+// ==== WIFI & MQTT CONFIG ====
+const char* ssid = "v";
+const char* password = "12345678";
 const char* mqtt_server = "6db8e3ab3e1f49e996390fcd994f9a27.s1.eu.hivemq.cloud";
 const int mqtt_port = 8883;
-const char* mqtt_user = "Darshu";        
-const char* mqtt_pass = "DARSHANhmd1@";      
+const char* mqtt_user = "Darshu";
+const char* mqtt_pass = "DARSHANhmd1@";
 
-// -----------------------------
-// Root CA certificate (Let's Encrypt ISRG Root X1)
-// -----------------------------
-const char* root_ca =
-"-----BEGIN CERTIFICATE-----\n"
-"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\n"
-"-----END CERTIFICATE-----\n";
-
-// -----------------------------
-// MQTT client setup
-// -----------------------------
 WiFiClientSecure espClient;
 PubSubClient client(espClient);
 
-// -----------------------------
-// Wi-Fi connect function
-// -----------------------------
-void setup_wifi() {
-  delay(10);
-  Serial.println();
-  Serial.print("Connecting to ");
+// ==== WIFI SETUP ====
+void setupWiFi() {
+  Serial.print("Connecting to WiFi: ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
-
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-
-  Serial.println("\nWiFi connected!");
+  Serial.println("\n✅ WiFi connected!");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+
+  espClient.setInsecure(); // Ignore SSL certificate validation
+  client.setServer(mqtt_server, mqtt_port);
 }
 
-// -----------------------------
-// MQTT message callback
-// -----------------------------
-void callback(char* topic, byte* message, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("]: ");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]);
-  }
-  Serial.println();
+// ==== NPK FUNCTIONS ====
+void modbusWrite(uint8_t* frame, uint8_t len) {
+  mod.write(frame, len);
+  mod.flush();
 }
 
-// -----------------------------
-// Reconnect if disconnected
-// -----------------------------
-void reconnect() {
-  while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
-    if (client.connect("ESP32Client", mqtt_user, mqtt_pass)) {
-      Serial.println("connected");
-      client.subscribe("esp32/sensors");
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-      delay(5000);
-    }
-  }
+int readNPK(int *N, int *P, int *K, float *temp, float *moisture) {
+  uint8_t query[] = {0x01, 0x03, 0x00, 0x00, 0x00, 0x07, 0x04, 0x08};
+  modbusWrite(query, 8);
+  delay(200);
+
+  uint8_t resp[25];
+  int len = mod.readBytes(resp, 25);
+  if (len < 15) return 0;
+
+  *temp = (resp[3] << 8 | resp[4]) / 10.0;
+  *moisture = (resp[5] << 8 | resp[6]) / 10.0;
+  *N = resp[9];
+  *P = resp[11];
+  *K = resp[13];
+  return 1;
 }
 
-// -----------------------------
-// Setup
-// -----------------------------
+// ==== SEND TO HIVEMQ ====
+void sendToHiveMQ(float npk_temp, float npk_moist, int N, int P, int K,
+                  float airTemp, float airHum, int soilADC, float soilPercent) {
+  char payload[256];
+  snprintf(payload, sizeof(payload),
+           "{\"N\":%d,\"P\":%d,\"K\":%d,"
+           "\"SoilTemp\":%.1f,\"SoilMoist\":%.1f,"
+           "\"AirTemp\":%.1f,\"AirHum\":%.1f,"
+           "\"SoilADC\":%d,\"SoilMoisturePct\":%.1f}",
+           N, P, K, npk_temp, npk_moist, airTemp, airHum, soilADC, soilPercent);
+
+  client.publish("esp32/sensors", payload);
+  Serial.println("✅ Data sent to HiveMQ:");
+  Serial.println(payload);
+}
+
+// ==== SETUP ====
 void setup() {
   Serial.begin(115200);
+  mod.begin(9600, SERIAL_8N1, 16, 17);
   dht.begin();
-  setup_wifi();
-
-  espClient.setCACert(root_ca);
-  client.setServer(mqtt_server, mqtt_port);
-  client.setCallback(callback);
+  setupWiFi();
+  Serial.println("ESP32 Sensor Node Ready (DHT11 + Moisture + NPK)");
 }
 
-// -----------------------------
-// Main loop
-// -----------------------------
+// ==== MAIN LOOP ====
 void loop() {
   if (!client.connected()) {
-    reconnect();
-  }
-  client.loop();
-
-  static unsigned long lastMsg = 0;
-  if (millis() - lastMsg > 5000) {
-    lastMsg = millis();
-
-    float temperature = dht.readTemperature();
-    float humidity = dht.readHumidity();
-    int moisture = analogRead(MOISTURE_PIN);
-    moisture = map(moisture, 0, 4095, 100, 0); // 0% = wet, 100% = dry
-
-    if (isnan(temperature) || isnan(humidity)) {
-      Serial.println("Failed to read from DHT sensor!");
+    Serial.println("Connecting to HiveMQ...");
+    if (client.connect("ESP32_Client", mqtt_user, mqtt_pass)) {
+      Serial.println("✅ Connected to HiveMQ!");
+    } else {
+      Serial.println("❌ HiveMQ connection failed, retrying...");
+      delay(3000);
       return;
     }
-
-    String payload = "{\"temperature\":" + String(temperature, 1) +
-                     ",\"humidity\":" + String(humidity, 1) +
-                     ",\"moisture\":" + String(moisture) + "}";
-
-    client.publish("esp32/sensors", payload.c_str());
-    Serial.println("Published: " + payload);
   }
+
+  // Step 1: DHT11
+  float airTemp = dht.readTemperature();
+  float airHum = dht.readHumidity();
+
+  // Step 2: Moisture
+  int soilADC = analogRead(MOISTURE_PIN);
+  float soilPercent = map(soilADC, 4095, 0, 0, 100);
+
+  // Step 3: NPK
+  int N = 0, P = 0, K = 0;
+  float npk_temp = 0, npk_moist = 0;
+
+  Serial.println("\n------ SENSOR READINGS ------");
+  Serial.print("Air Temperature: "); Serial.print(airTemp); Serial.println(" °C");
+  Serial.print("Air Humidity: "); Serial.print(airHum); Serial.println(" %");
+  Serial.print("Soil Moisture (Analog %): "); Serial.println(soilPercent);
+
+  if (readNPK(&N, &P, &K, &npk_temp, &npk_moist)) {
+    Serial.print("N: "); Serial.println(N);
+    Serial.print("P: "); Serial.println(P);
+    Serial.print("K: "); Serial.println(K);
+    Serial.print("NPK Temp: "); Serial.println(npk_temp);
+    Serial.print("NPK Moisture: "); Serial.println(npk_moist);
+
+    sendToHiveMQ(npk_temp, npk_moist, N, P, K, airTemp, airHum, soilADC, soilPercent);
+  } else {
+    Serial.println("⚠️ Failed to read NPK sensor");
+  }
+
+  Serial.println("------------------------------\n");
+
+  client.loop();
+
+  Serial.println("⏳ Waiting 4 minutes before next reading...");
+  delay(240000); // 4 minutes delay (240000 ms)
 }
