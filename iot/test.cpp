@@ -1,24 +1,33 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
+#include <DHT.h>
+
+// -----------------------------
+// Sensor setup
+// -----------------------------
+#define DHTPIN 4       // DHT11 data pin connected to GPIO 4
+#define DHTTYPE DHT11
+#define MOISTURE_PIN 34 // Analog pin for soil moisture sensor
+
+DHT dht(DHTPIN, DHTTYPE);
 
 // -----------------------------
 // Wi-Fi credentials
 // -----------------------------
-const char* ssid = "v";          // <-- Replace with your WiFi name
-const char* password = "12345678";  // <-- Replace with your WiFi password
+const char* ssid = "v";          
+const char* password = "12345678";  
 
 // -----------------------------
 // HiveMQ Cloud credentials
 // -----------------------------
-const char* mqtt_server = "";  // <-- Your cluster
+const char* mqtt_server = "6db8e3ab3e1f49e996390fcd994f9a27.s1.eu.hivemq.cloud";
 const int mqtt_port = 8883;
-const char* mqtt_user = "";        // <-- Your HiveMQ Cloud username
-const char* mqtt_pass = "";      // <-- Your HiveMQ Cloud password
+const char* mqtt_user = "Darshu";        
+const char* mqtt_pass = "DARSHANhmd1@";      
 
 // -----------------------------
 // Root CA certificate (Let's Encrypt ISRG Root X1)
-// Make sure every line ends with \n
 // -----------------------------
 const char* root_ca =
 "-----BEGIN CERTIFICATE-----\n"
@@ -100,7 +109,7 @@ void reconnect() {
     Serial.print("Attempting MQTT connection...");
     if (client.connect("ESP32Client", mqtt_user, mqtt_pass)) {
       Serial.println("connected");
-      client.subscribe("test/topic");  // Subscribe to topic
+      client.subscribe("esp32/sensors");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -115,6 +124,7 @@ void reconnect() {
 // -----------------------------
 void setup() {
   Serial.begin(115200);
+  dht.begin();
   setup_wifi();
 
   espClient.setCACert(root_ca);
@@ -134,8 +144,22 @@ void loop() {
   static unsigned long lastMsg = 0;
   if (millis() - lastMsg > 5000) {
     lastMsg = millis();
-    String msg = "Hello from ESP32 (HiveMQ Cloud)";
-    client.publish("test/topic", msg.c_str());
-    Serial.println("Message sent: " + msg);
+
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
+    int moisture = analogRead(MOISTURE_PIN);
+    moisture = map(moisture, 0, 4095, 100, 0); // 0% = wet, 100% = dry
+
+    if (isnan(temperature) || isnan(humidity)) {
+      Serial.println("Failed to read from DHT sensor!");
+      return;
+    }
+
+    String payload = "{\"temperature\":" + String(temperature, 1) +
+                     ",\"humidity\":" + String(humidity, 1) +
+                     ",\"moisture\":" + String(moisture) + "}";
+
+    client.publish("esp32/sensors", payload.c_str());
+    Serial.println("Published: " + payload);
   }
 }
