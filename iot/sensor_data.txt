@@ -1,1 +1,2 @@
 [2025-11-06T17:14:28.910Z] esp32/sensors: {"N":3,"P":0,"K":0,"SoilTemp":30.5,"SoilMoist":0.0,"AirTemp":28.5,"AirHum":60.0,"SoilADC":4095,"SoilMoisturePct":0.0}
+[2025-11-07T06:54:17.952Z] esp32/sensors: {"N":3,"P":0,"K":0,"SoilTemp":28.8,"SoilMoist":0.0,"AirTemp":25.8,"AirHum":61.0,"SoilADC":4095,"SoilMoisturePct":0.0}
