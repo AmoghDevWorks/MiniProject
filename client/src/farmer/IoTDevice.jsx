@@ -41,7 +41,7 @@ const IoTDevice = () => {
         potassium: data.K ?? null
       });
 
-      setLastUpdated(new Date());
+      setLastUpdated(data.date + '  ' + data.time.slice(0,-4));
     } catch (err) {
       console.error('Failed to fetch IoT data', err);
     } finally {
@@ -197,16 +197,16 @@ const IoTDevice = () => {
                   <Droplets className="w-6 h-6 text-green-600" />
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-gray-600 font-medium">Humidity</p>
+                  <p className="text-sm text-gray-600 font-medium">Soil Moisture</p>
                   <p className="text-3xl font-bold text-gray-800">
-                    {deviceData.humidity !== null ? `${deviceData.humidity}%` : '-'}
+                    {deviceData.soilMoisture !== null ? `${deviceData.soilMoisture}%` : '-'}
                   </p>
                 </div>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
                   className="bg-green-600 h-2 rounded-full transition-all duration-500"
-                  style={{ width: deviceData.humidity ? `${deviceData.humidity}%` : '0%' }}
+                  style={{ width: deviceData.soilMoisture ? `${deviceData.soilMoisture}%` : '0%' }}
                 />
               </div>
             </div>
