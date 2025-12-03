@@ -115,7 +115,7 @@ const DiseaseDetection = () => {
       };
 
       // console.log(DetectionQuery,'/n/n',IoTQuery)
-      console.log(jsonForQuery)
+      // console.log(jsonForQuery)
 
       // 3️⃣ Step 3: Send data to RAG retrieval API
       const ragResponse = await axios.post(
@@ -149,7 +149,7 @@ const DiseaseDetection = () => {
         throw new Error('Failed to save detection data');
       }
 
-      console.log("✅ Detection data saved successfully:", saveResponse.data);
+      // console.log("✅ Detection data saved successfully:", saveResponse.data);
 
     } catch (err) {
       setError(err.message || 'An error occurred during prediction or retrieval');
