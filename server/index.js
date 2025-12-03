@@ -5,6 +5,7 @@ const dotenv = require('dotenv')
 const cookieParser = require('cookie-parser')
 const adminRoutes = require('./routes/admin')
 const farmerRoutes = require('./routes/farmer')
+const iotRoutes = require('./routes/iot')
 const app = express();
 
 dotenv.config();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 dbConnect()
 
+app.use('/iot',iotRoutes)
 app.use('/admin',adminRoutes)
 app.use('/farmer',farmerRoutes)
 app.listen(8000,()=>{
