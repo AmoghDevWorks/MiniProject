@@ -13,5 +13,5 @@ const iotData = createSlice({
     }
 })
 
-export const { addRole,removeRole } = iotData.actions
+export const { addIoT,removeIoT } = iotData.actions
 export default iotData.reducer

@@ -1,38 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Thermometer, Droplets, Sprout, Activity, Plus } from 'lucide-react';
+import { addIoT } from '../utils/iotDataSlice'
 
 const IoTDevice = () => {
   const IoTDeviceId = useSelector(state => state.user.IoTDeviceId);
+  const dispatch = useDispatch();
   // const IoTDeviceId = 1
   const [deviceData, setDeviceData] = useState({
     temperature: null,
-    humidity: null,
+    soilMoisture: null,
     nitrogen: null,
     phosphorus: null,
     potassium: null
   });
   const [showAddDevice, setShowAddDevice] = useState(false);
   const [newDeviceId, setNewDeviceId] = useState('');
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
 
-  // Simulate fetching device data (replace with your actual API call)
+  // fetch function callable from useEffect and Refresh button
+  const fetchDeviceData = useCallback(async () => {
+    try {
+      setIsFetching(true);
+      const res = await fetch('http://localhost:8000/iot/getIoTData');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      // store complete response in redux
+      dispatch(addIoT(data));
+
+      // map required fields into deviceData state
+      setDeviceData({
+        // Prefer SoilTemp for the displayed "Temperature" card; fallback to AirTemp
+        temperature: data.SoilTemp ?? data.AirTemp ?? null,
+        // Prefer SoilMoisturePct / SoilMoist for displayed soil moisture; fallback to AirHum
+        soilMoisture: data.SoilMoisturePct ?? data.SoilMoist ?? data.AirHum ?? null,
+        nitrogen: data.N ?? null,
+        phosphorus: data.P ?? null,
+        potassium: data.K ?? null
+      });
+
+      setLastUpdated(new Date());
+    } catch (err) {
+      console.error('Failed to fetch IoT data', err);
+    } finally {
+      setIsFetching(false);
+    }
+  }, [dispatch]);
+
+  // initial load when IoTDeviceId is present
   useEffect(() => {
     if (IoTDeviceId) {
-      // Replace this with your actual API call
-      // Example: fetch(`/api/device/${IoTDeviceId}/data`)
-      const fetchDeviceData = async () => {
-        // Simulated data - replace with actual API call
-        setDeviceData({
-          temperature: 28.5,
-          humidity: 65,
-          nitrogen: 45,
-          phosphorus: 38,
-          potassium: 52
-        });
-      };
       fetchDeviceData();
     }
-  }, [IoTDeviceId]);
+  }, [IoTDeviceId, fetchDeviceData]);
 
   const handleAddDevice = () => {
     // Handle adding device logic here
@@ -112,12 +134,25 @@ const IoTDevice = () => {
     <div className="min-h-screen bg-white p-6">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center">
-            IoT Device Dashboard
-          </h1>
-          <p className="text-gray-600 text-center mb-8">
-            Real-time monitoring of your farm
-          </p>
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                IoT Device Dashboard
+              </h1>
+              <p className="text-gray-600 mb-2">
+                Real-time monitoring of your farm
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={fetchDeviceData}
+                disabled={isFetching}
+                className="bg-green-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-green-700 transition-colors flex items-center gap-2"
+              >
+                {isFetching ? 'Refreshing...' : 'Refresh'}
+              </button>
+            </div>
+          </div>
 
           {/* Device ID Card */}
           <div className="bg-green-100 border border-green-600 rounded-xl p-4 mb-6">
@@ -240,7 +275,7 @@ const IoTDevice = () => {
           {/* Last Updated */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-500">
-              Last updated: {new Date().toLocaleString()}
+              Last updated: {lastUpdated ? lastUpdated.toLocaleString() : '—'}
             </p>
           </div>
         </div>
