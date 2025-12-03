@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { Camera, Upload, X, Loader2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Upload, Camera, X, Loader2 } from 'lucide-react';
+import { addIoT } from '../utils/iotDataSlice';
 import axios from 'axios'
-import { useSelector } from 'react-redux'
 
 const DiseaseDetection = () => {
   const [image, setImage] = useState(null);
@@ -15,8 +16,30 @@ const DiseaseDetection = () => {
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
   
-  const IsIoTAvailable = useSelector((state=>state.user?.IoTDeviceId))
-  const farmerId = useSelector((state=>state.user?._id))
+  const IsIoTAvailable = useSelector((state=>state.user?.IoTDeviceId));
+  const farmerId = useSelector((state=>state.user?._id));
+  const iotData = useSelector((state=>state.iotData));
+  const dispatch = useDispatch();
+
+  // Fetch IoT data on mount if not already in Redux
+  useEffect(() => {
+    const fetchIoTData = async () => {
+      if (!iotData) {
+        try {
+          const res = await fetch('http://localhost:8000/iot/getIoTData');
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          dispatch(addIoT(data));
+        } catch (err) {
+          console.error('Failed to fetch IoT data', err);
+        }
+      }
+    };
+    
+    if (IsIoTAvailable) {
+      fetchIoTData();
+    }
+  }, [IsIoTAvailable, iotData, dispatch]);
 
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
@@ -80,27 +103,19 @@ const DiseaseDetection = () => {
       const resultData = predictionResponse.data;
       setResult(resultData);
 
-      // 2️⃣ Step 2: Retrieve IoT data (or mock if not connected)
-      const sensorData = {
-        temperature: 28.5, // example value
-        moisture: 65,      // example value
-        npk: "12-8-10"     // example value
-      };
-
       const DetectionQuery = `The result of the model regarding the uploaded image is label: ${resultData.label} with a confidence of ${(resultData.confidence * 100).toFixed(2)}%.`;
 
+      // console.log(IsIoTAvailable,iotData)
       const IoTQuery = IsIoTAvailable
-        ? `
-          The response of the IoT sensors are:
-          1. Temperature: ${sensorData.temperature} °C
-          2. Moisture: ${sensorData.moisture} %
-          3. NPK: ${sensorData.npk}
-        `
+        ? iotData
         : "IoT sensor data is not available.";
 
       const jsonForQuery = {
-        query: `${DetectionQuery}\n${IoTQuery}`
+        query: `${DetectionQuery}\n${JSON.stringify(IoTQuery, null, 2)}`
       };
+
+      // console.log(DetectionQuery,'/n/n',IoTQuery)
+      console.log(jsonForQuery)
 
       // 3️⃣ Step 3: Send data to RAG retrieval API
       const ragResponse = await axios.post(
