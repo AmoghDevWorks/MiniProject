@@ -61,7 +61,8 @@ const Navbar = () => {
                 </div>
               </div>
             ) : (
-              <Link to="/auth" className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium">
+              // <Link to="/auth" className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium">
+              <Link to="/farmerSignIn" className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium">
                 <LogIn size={20} />
                 <span>Sign In</span>
               </Link>
